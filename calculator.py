@@ -4,80 +4,91 @@ from decimal import Decimal, getcontext
 import math
 from sympy import gcd, lcm
 
+def parse_input(value):
+    """Convert input to Decimal, handling hexadecimal inputs."""
+    if value.lower().startswith("0x"):  # Hexadecimal input
+        return Decimal(int(value, 16))  # Convert from hex to decimal
+    return Decimal(value)  # Decimal input
+
 def calculate(operation):
     try:
         getcontext().prec = int(precision_entry.get())  # Set precision for Decimal
-        x = Decimal(entry_x.get()) if entry_x.get() else None
-        y = Decimal(entry_y.get()) if entry_y.get() else None
+        x = parse_input(entry_x.get()) if entry_x.get() else None
+        y = parse_input(entry_y.get()) if entry_y.get() else None
 
         if operation == "add":
-            result.set(x + y)
+            result_decimal = x + y
         elif operation == "subtract":
-            result.set(x - y)
+            result_decimal = x - y
         elif operation == "multiply":
-            result.set(x * y)
+            result_decimal = x * y
         elif operation == "divide":
             if y == 0:
                 raise ValueError("Division by zero is undefined")
-            result.set(x / y)
+            result_decimal = x / y
         elif operation == "power":
-            result.set(x ** y)
+            result_decimal = x ** y
         elif operation == "sqrt":
             if x < 0:
                 raise ValueError("Cannot calculate the square root of a negative number")
-            result.set(x.sqrt())
+            result_decimal = x.sqrt()
         elif operation == "factorial":
             if x % 1 != 0 or x < 0:
                 raise ValueError("Factorial is only defined for non-negative integers")
-            result.set(math.factorial(int(x)))
+            result_decimal = Decimal(math.factorial(int(x)))
         elif operation == "mod":
-            result.set(x % y)
+            result_decimal = x % y
         elif operation == "gcd":
-            result.set(gcd(int(x), int(y)))
+            result_decimal = Decimal(gcd(int(x), int(y)))
         elif operation == "lcm":
-            result.set(lcm(int(x), int(y)))
+            result_decimal = Decimal(lcm(int(x), int(y)))
         elif operation == "scientific_notation":
-            result.set(f"{x:.{int(precision_entry.get())}E}")
+            result_decimal = Decimal(f"{x:.{int(precision_entry.get())}E}")
         elif operation == "absolute":
-            result.set(abs(x))
+            result_decimal = abs(x)
         elif operation == "negation":
-            result.set(-x)
+            result_decimal = -x
         elif operation == "reciprocal":
             if x == 0:
                 raise ValueError("Cannot compute reciprocal of zero")
-            result.set(1 / x)
+            result_decimal = Decimal(1 / x)
         elif operation == "square":
-            result.set(x ** 2)
+            result_decimal = x ** 2
         elif operation == "cube":
-            result.set(x ** 3)
+            result_decimal = x ** 3
         elif operation == "ln":
             if x <= 0:
                 raise ValueError("Logarithm undefined for zero or negative values")
-            result.set(x.ln())
+            result_decimal = x.ln()
         elif operation == "log10":
             if x <= 0:
                 raise ValueError("Logarithm undefined for zero or negative values")
-            result.set(math.log10(x))
+            result_decimal = Decimal(math.log10(x))
         elif operation == "exp":
-            result.set(x.exp())
+            result_decimal = x.exp()
         elif operation == "nCr":
             if x % 1 != 0 or y % 1 != 0 or x < y:
                 raise ValueError("nCr is only defined for non-negative integers where n ≥ r")
-            result.set(math.comb(int(x), int(y)))
+            result_decimal = Decimal(math.comb(int(x), int(y)))
         elif operation == "nPr":
             if x % 1 != 0 or y % 1 != 0 or x < y:
                 raise ValueError("nPr is only defined for non-negative integers where n ≥ r")
-            result.set(math.perm(int(x), int(y)))
+            result_decimal = Decimal(math.perm(int(x), int(y)))
         elif operation == "floor_division":
             if y == 0:
                 raise ValueError("Division by zero is undefined")
-            result.set(x // y)
+            result_decimal = x // y
+        else:
+            raise ValueError("Invalid operation")
+
+        # Display result in both decimal and hexadecimal formats
+        result.set(f"Decimal: {result_decimal}\nHex: {hex(int(result_decimal))}")
     except Exception as e:
         messagebox.showerror("Error", str(e))
 
 # GUI setup
 root = tk.Tk()
-root.title("Big Number Calculator")
+root.title("Big Number Calculator with Hex Support")
 
 # Input Fields
 tk.Label(root, text="X:").grid(row=0, column=0, padx=5, pady=5)
