@@ -43,7 +43,10 @@ def calculate(operation):
                 raise ValueError("Cannot calculate the square root of a negative number")
             result_decimal = x.sqrt()
         elif operation == "cbrt":
-            result_decimal = Decimal(x ** (1 / 3))  # Cubic root
+            if x < 0:
+                result_decimal = -Decimal(abs(float(x)) ** (1 / 3))  # Handle negative numbers
+            else:
+                result_decimal = Decimal(float(x) ** (1 / 3))  # Cubic root
         elif operation == "factorial":
             if x % 1 != 0 or x < 0:
                 raise ValueError("Factorial is only defined for non-negative integers")
